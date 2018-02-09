@@ -1,0 +1,23 @@
+{% load tz %}
+{% load edc_base_extras %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+<!--  begin columns  -->
+
+<td>{{ result.subject_identifier }}
+</td>
+<td>
+   {% if result.gender == MALE %}
+       <i class="fa fa-male fa-lg"></i>
+   {% else %}
+       <i class="fa fa-female fa-lg"></i>
+   {% endif %}
+   {{ result.first_name }} {{ result.initials }}
+</td>
+<td>{% age_in_years result.object.dob %}yrs {{ result.object.dob|date:"Y-m-d" }}</td>
+<td>{{ result.object.consent_datetime|date:"Y-m-d" }}</td>  
+<td>{{ result.object.modified|date:"Y-m-d H:i" }}</td>
+<td>{{ result.hostname_created }}</td>
+<!--  end columns  -->

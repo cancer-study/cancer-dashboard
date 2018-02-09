@@ -1,0 +1,4 @@
+include AUTHORS CHANGES README.md LICENCE
+recursive-include cancer_dashboard/templates *
+recursive-include cancer_dashboard/static *
+recursive-exclude etc/*

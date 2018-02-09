@@ -1,0 +1,19 @@
+{% load tz %}
+{% load edc_base_extras %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+<!--  begin columns  -->
+<td>
+    {% if not result.eligible %}
+        <span class="text text-danger"><i class="fa fa-check-circle fa-fw" title="Not Eligible"></i></span> Not Eligible
+    {% else %}
+        <span class="text text-success"><i class="fa fa-check-circle fa-fw" title="Eligible"></i></span> Eligible
+    {% endif %}
+ </td>
+<td>{{ result.object.subject_identifier }} </td>
+<td>{{ result.first_name }} | {{ result.initials }}</td>
+<td>{{ result.first_name }} | {{ result.initials }}</td>
+<td>{{ result.object.modified|date:"Y-m-d H:i" }}</td>  
+<td>{{ result.hostname_created }}</td>
+<!--  end columns  -->
