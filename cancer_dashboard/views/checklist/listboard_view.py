@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from edc_base.view_mixins import EdcBaseViewMixin
-from edc_dashboard.view_mixins import AppConfigViewMixin, ListboardFilterViewMixin
+from edc_dashboard.view_mixins import ListboardFilterViewMixin
 from edc_dashboard.views import ListboardView
 
 from cancer_dashboard.views.checklist.filters import ListboardViewFilters
@@ -13,7 +13,7 @@ from cancer_dashboard.views.checklist.filters import ListboardViewFilters
 from ...model_wrappers import EnrollmentChecklistModelWrapper
 
 
-class EnrollmentCheckListBoardView(AppConfigViewMixin, EdcBaseViewMixin,
+class EnrollmentCheckListBoardView(EdcBaseViewMixin,
                                    ListboardFilterViewMixin, ListboardView):
 
     model = 'cancer_subject.enrollmentchecklist'

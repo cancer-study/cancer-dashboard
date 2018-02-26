@@ -6,21 +6,32 @@ from django.utils.decorators import method_decorator
 from edc_base.utils import get_utcnow
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import MALE
-from edc_dashboard.view_mixins import AppConfigViewMixin, ListboardFilterViewMixin
+from edc_dashboard.view_mixins import ListboardFilterViewMixin, SearchFormViewMixin
 from edc_dashboard.views import ListboardView
+from edc_navbar import NavbarViewMixin
 
 from ....model_wrappers import SubjectConsentModelWrapper
+from .filters import ListboardViewFilters
 
 
-class SubjectConsentListboardView(AppConfigViewMixin, EdcBaseViewMixin,
-                                  ListboardFilterViewMixin, ListboardView):
+class SubjectConsentListboardView(NavbarViewMixin, EdcBaseViewMixin,
+                                  ListboardFilterViewMixin, SearchFormViewMixin,
+                                  ListboardView):
 
+    listboard_template = 'screening_listboard_template'
+    listboard_url = 'consent_listboard_url'
+    listboard_panel_style = 'info'
+    listboard_fa_icon = "fa-user-plus"
+
+    listboard_view_filters = ListboardViewFilters()
     model = 'cancer_subject.subjectconsent'
     model_wrapper_cls = SubjectConsentModelWrapper
     app_config_name = 'cancer_dashboard'
-
     navbar_name = 'cancer_dashboard'
     navbar_selected_item = 'consented_subject'
+    ordering = '-modified'
+    paginate_by = 10
+    search_form_url = 'consent_listboard_url'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

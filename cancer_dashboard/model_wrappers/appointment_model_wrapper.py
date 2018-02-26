@@ -1,5 +1,5 @@
 from django.apps import apps as django_apps
-from edc_appointment.views import AppointmentModelWrapper as BaseAppointmentModelWrapper
+from edc_subject_dashboard import AppointmentModelWrapper as BaseAppointmentModelWrapper
 
 from .subject_visit_model_wrapper import SubjectVisitModelWrapper
 
