@@ -142,7 +142,8 @@ DASHBOARD_URL_NAMES = {
 DASHBOARD_BASE_TEMPLATES = {
     'listboard_base_template': 'cancer/base.html',
     'dashboard_base_template': 'cancer/base.html',
-    'screening_listboard_template': 'cancer_dashboard/screening/listboard.html',
+    'checklist_listboard_template': 'cancer_dashboard/checklist/listboard.html',
+    #     'screening_listboard_template': 'cancer_dashboard/screening/listboard.html',
     'subject_listboard_template': 'cancer_dashboard/subject/listboard.html',
     'subject_dashboard_template': 'cancer_dashboard/subject/dashboard.html',
 }

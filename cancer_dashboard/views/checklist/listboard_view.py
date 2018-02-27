@@ -16,17 +16,32 @@ from ...model_wrappers import EnrollmentChecklistModelWrapper
 class EnrollmentCheckListBoardView(EdcBaseViewMixin,
                                    ListboardFilterViewMixin, ListboardView):
 
+    listboard_template = 'checklist_listboard_template'
+    listboard_url = 'checklist_listboard_url'
+    listboard_panel_style = 'info'
+    listboard_fa_icon = "fa-user-plus"
+
+    app_config_name = 'cancer_dashboard'
+    listboard_view_filters = ListboardViewFilters()
     model = 'cancer_subject.enrollmentchecklist'
     model_wrapper_cls = EnrollmentChecklistModelWrapper
-    listboard_url_name = django_apps.get_app_config(
-        'cancer_dashboard').checklist_listboard_url_name
-    paginate_by = 10
-    app_config_name = 'cancer_dashboard'
-    ordering = '-modified'
-    listboard_view_filters = ListboardViewFilters()
-
     navbar_name = 'cancer_dashboard'
     navbar_selected_item = 'enrollment_checklist'
+    ordering = '-modified'
+    paginate_by = 10
+    search_form_url = 'checklist_listboard_url'
+
+#     model = 'cancer_subject.enrollmentchecklist'
+#     model_wrapper_cls = EnrollmentChecklistModelWrapper
+#     listboard_url_name = django_apps.get_app_config(
+#         'cancer_dashboard').checklist_listboard_url_name
+#     paginate_by = 10
+#     app_config_name = 'cancer_dashboard'
+#     ordering = '-modified'
+#     listboard_view_filters = ListboardViewFilters()
+#
+#     navbar_name = 'cancer_dashboard'
+#     navbar_selected_item = 'enrollment_checklist'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

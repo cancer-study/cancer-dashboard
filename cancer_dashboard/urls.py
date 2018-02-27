@@ -22,12 +22,12 @@ subject_listboard_url_config = UrlConfig(
     label='subject_listboard',
     identifier_label='subject_identifier',
     identifier_pattern=subject_identifier)
-# subject_dashboard_url_config = UrlConfig(
-#     url_name='dashboard_url',
-#     view_class=EnrollmentCheckListBoardView,
-#     label='screening_listboard',
-#     identifier_label='screening_identifier',
-#     identifier_pattern=subject_identifier)
+checklist_listboard_url_config = UrlConfig(
+    url_name='checklist_listboard_url',
+    view_class=EnrollmentCheckListBoardView,
+    label='screening_listboard',
+    identifier_label='screening_identifier',
+    identifier_pattern=subject_identifier)
 subject_dashboard_url_config = UrlConfig(
     url_name='dashboard_url',
     view_class=SubjectDashboardView,
@@ -107,7 +107,8 @@ def checklist_listboard_urls():
 urlpatterns = []
 urlpatterns += subject_listboard_url_config.listboard_urls
 urlpatterns += subject_dashboard_url_config.dashboard_urls
-urlpatterns += checklist_listboard_urls()
+urlpatterns += checklist_listboard_url_config.listboard_urls
+# urlpatterns += checklist_listboard_urls()
 
 if settings.APP_NAME == 'cancer_dashboard':
     from .tests.admin import cancer_subject_admin

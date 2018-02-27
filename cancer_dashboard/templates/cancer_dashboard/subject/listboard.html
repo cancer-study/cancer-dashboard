@@ -1,50 +1,38 @@
-{% extends base_template_name %}
-
-{% load tz %}
-{% load staticfiles %}
-{% load crispy_forms_tags %}
+{% extends "edc_dashboard/listboard.html" %}
 {% load edc_base_extras %}
 
-{% block main %}
-<div class="container">
-    <div class="col-md-12">
-        <div class="panel-group">
-            <div class="panel panel-success">
-                <div class="panel-heading">
 
-                    <i class="fa fa-user-circle-o fa-2x"></i></i>
-                        <span class="pull-right">{% include 'edc_dashboard/search_form.html' %}</span>
-                        {% include 'cancer_dashboard/subject/listboard/add_subject_consent_button.html' %}
-                </div>
-                <div class="table table-responsive">
-                    <table class="table table-condensed table-hover small">
-                    <thead>
+{% block listboard_table_header %}
 
-                    {% include 'cancer_dashboard/subject/listboard/results_header.html' %}
+    <!-- begin results header -->
+    <th>#</th>
+    <th></th>
+    <th>Identifier</th>
+    <th>Subject</th>
+    <th>Age / Born</th>
+    <th>Consented</th>
+    <th>Modified</th>
+    <th>Host</th>
+    <!-- end results header -->
 
-			         </thead>
-			         <tbody>
+{% endblock listboard_table_header %}
 
-                    {% include 'cancer_dashboard/subject/listboard/results_body.html' %}
 
-			         </tbody>
-			         </table>
-                    <!-- begin spacer rows -->
+{% block listboard_table_columns %}
 
-                    <table>
-                    <tr><td>&nbsp;</td></tr>
-                    <tr><td>&nbsp;</td></tr>
-                    <tr><td>&nbsp;</td></tr>
-                    <tr><td>&nbsp;</td></tr>
-                    <tr><td>&nbsp;</td></tr>
-                    </table>
-                    <!-- end spacer rows -->
-                </div>
-                {% include 'edc_dashboard/paginator.html' %}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+    <td>{{ result.subject_identifier }}
+    </td>
+    <td>
+       {% if result.gender == MALE %}
+           <i class="fa fa-male fa-lg"></i>
+       {% else %}
+           <i class="fa fa-female fa-lg"></i>
+       {% endif %}
+       {{ result.first_name }} {{ result.initials }}
+    </td>
+    <td>{% age_in_years result.object.dob %}yrs {{ result.object.dob|date:"SHORT_DATE_FORMAT" }}</td>
+    <td>{{ result.object.consent_datetime|date:"SHORT_DATE_FORMAT" }}</td>  
+    <td>{{ result.object.modified|date:"SHORT_DATETIME_FORMAT" }}</td>
+    <td>{{ result.hostname_created }}</td>
 
-{% endblock main %}
+{% endblock listboard_table_columns %}

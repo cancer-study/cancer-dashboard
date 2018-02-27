@@ -1,52 +1,64 @@
-{% extends base_template_name %}
-
-{% load tz %}
-{% load staticfiles %}
-{% load crispy_forms_tags %}
+{% extends "edc_dashboard/listboard.html" %}
 {% load edc_base_extras %}
 
-{% block main %}
-<div class="container">
-    <div class="col-md-12">
-        <div class="panel-group">
-            <div class="panel panel-info">
-                <div class="panel-heading">
+{% block listboard_panel %}
+    <a title="add enrollment checklist" class="btn btn-sm btn-default" role="button" 
+    href="{{ enrollment_checklist_add_url }}?next={{ listboard_url_name }}">
+        <i class="fa fa-plus fa-sm"></i> Add Enrollment Checklist
+</a>
+{% endblock listboard_panel %}
 
-                    <i class="fa fa-user-circle-o fa-2x"></i></i>
-                        <span class="pull-right">{% include 'edc_dashboard/search_form.html' %}</span>
-                    
-                    {% include 'cancer_dashboard/checklist/listboard/add_enrollment_checklist_button.html' %}
+{% block listboard_table_header %}
 
-                </div>
-                <div class="table table-responsive">
-                    <table class="table table-condensed table-hover small">
-                    <thead>
+    <!-- begin results header -->
 
-                    {% include 'cancer_dashboard/checklist/listboard/results_header.html' %}
+        <th>#</th>
+        <th></th>
+        <th>Eligible</th>
+        <th>Subject Identifier</th>
+        <th>Age</th>
+        <th>Modified</th>
+        <th>Host</th>
+    <!-- end results header -->
 
-			         </thead>
-			         <tbody>
+{% endblock listboard_table_header %}
 
-                    {% include 'cancer_dashboard/checklist/listboard/results_body.html' %}
 
-			         </tbody>
-			         </table>
-                    <!-- begin spacer rows -->
+{% block listboard_table_button_column %}
+    <td style="white-space: nowrap">
+    <a title="Subject Eligibility"
+       class="btn btn-success btn-sm"
+           href="{{ result.href }}">
+        Edit
+    </a>
+    {% if not result.eligible %}
+        Not Eligible
+    {% elif result.consent %}
+         <a class="btn btn-success btn-sm" role="button"   
+        title="Go to subject's dashboard" href="/subject/dashboard/{{result.consent.subject_identifier}}/">
+        <i class="fa fa-user-circle-o fa-sm"></i> Dashboard</a>
+    {% else %}
+         <a title="Consent to participate"
+            class="btn btn-warning btn-sm"
+                href="{{ result.consent.href }}">
+             Consent (v{{ subject_screening.consent.version }})
+         </a>
+    {% endif %}
+    </td>
+{% endblock listboard_table_button_column %}
 
-                    <table>
-                    <tr><td>&nbsp;</td></tr>
-                    <tr><td>&nbsp;</td></tr>
-                    <tr><td>&nbsp;</td></tr>
-                    <tr><td>&nbsp;</td></tr>
-                    <tr><td>&nbsp;</td></tr>
-                    </table>
-                    <!-- end spacer rows -->
-                </div>
-                {% include 'edc_dashboard/paginator.html' %}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-{% endblock main %}
+{% block listboard_table_columns %}
+    <td>
+        {% if not result.eligible %}
+            <span class="text text-danger"><i class="fa fa-check-circle fa-fw" title="Not Eligible"></i></span> Not Eligible
+        {% else %}
+            <span class="text text-success"><i class="fa fa-check-circle fa-fw" title="Eligible"></i></span> Eligible
+        {% endif %}
+     </td>
+    <td>{{ result.object.subject_identifier }} </td>
+    <td>{{ result.first_name }} | {{ result.initials }}</td>
+    <td>{{ result.first_name }} | {{ result.initials }}</td>
+    <td>{{ result.object.modified|date:"Y-m-d H:i" }}</td>  
+    <td>{{ result.hostname_created }}</td>
+{% endblock listboard_table_columns %}

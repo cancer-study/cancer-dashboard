@@ -10,14 +10,12 @@ from .subject_consent_model_wrapper import SubjectConsentModelWrapper
 
 class EnrollmentChecklistModelWrapper(ConsentModelWrapperMixin, ModelWrapper):
 
+    consent_model_wrapper_cls = SubjectConsentModelWrapper
     model = 'cancer_subject.subjecteligibility'
     next_url_name = django_apps.get_app_config(
         'cancer_dashboard').checklist_listboard_url_name
     next_url_attrs = ['subject_identifier']
     querystring_attrs = ['gender']
-
-    consent_model_wrapper_cls = SubjectConsentModelWrapper
-    consent_model = 'cancer_subject.subjectconsent'
 
     @property
     def html_reason(self):

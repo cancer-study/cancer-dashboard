@@ -18,7 +18,7 @@ class SubjectConsentListboardView(NavbarViewMixin, EdcBaseViewMixin,
                                   ListboardFilterViewMixin, SearchFormViewMixin,
                                   ListboardView):
 
-    listboard_template = 'screening_listboard_template'
+    listboard_template = 'subject_listboard_template'
     listboard_url = 'consent_listboard_url'
     listboard_panel_style = 'info'
     listboard_fa_icon = "fa-user-plus"
