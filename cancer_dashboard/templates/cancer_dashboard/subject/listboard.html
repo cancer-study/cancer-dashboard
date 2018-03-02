@@ -1,25 +1,52 @@
 {% extends "edc_dashboard/listboard.html" %}
 {% load edc_base_extras %}
 
+{% block listboard_panel %}
+<a title="add subject consent" class="btn btn-sm btn-default" role="button" 
+    href="{{ subject_consent_add_url }}?next={{ consent_listboard_url }}">
+        <i class="fa fa-plus fa-sm"></i> Add Subject Consent
+</a>
+{% endblock listboard_panel %}
+
 
 {% block listboard_table_header %}
 
     <!-- begin results header -->
-    <th>#</th>
-    <th></th>
-    <th>Identifier</th>
-    <th>Subject</th>
-    <th>Age / Born</th>
-    <th>Consented</th>
-    <th>Modified</th>
-    <th>Host</th>
+
+        <th>#</th>
+        <th></th>
+        <th>Eligible</th>
+        <th>Subject Identifier</th>
+        <th>Modified</th>
+        <th>Host</th>
     <!-- end results header -->
 
 {% endblock listboard_table_header %}
 
 
-{% block listboard_table_columns %}
+{% block listboard_table_button_column %}
+    <td style="white-space: nowrap">
+    <a title="Edit subject's consent form" role="button" 
+       class="btn btn-default btn-sm"
+           href="{{ result.href }}">
+        <i class="fa fa-pencil fa-sm"></i>
+    </a>
+    {% if not result.enrollment_checklist.id %}
+         <a class="btn btn-warning btn-sm" role="button"   
+        title="Add Enrollment Checklist" href="{{ result.enrollment_checklist_add_url }}?next={{ checklist_listboard_url }}&subject_identifier={{result.object.subject_identifier}}">
+        Add Enrollment Checklist</a>
+    {% else %}
+         <a title="Go to subject's dashboard"
+            class="btn btn-success btn-sm"
+                href="/subject/dashboard/{{result.subject_identifier}}/">
+            <i class="fa fa-user-circle-o fa-sm"></i> Dashboard</a>
+         </a>
+    {% endif %}
+</td>
+{% endblock listboard_table_button_column %}
 
+
+{% block listboard_table_columns %}
     <td>{{ result.subject_identifier }}
     </td>
     <td>
@@ -30,9 +57,8 @@
        {% endif %}
        {{ result.first_name }} {{ result.initials }}
     </td>
-    <td>{% age_in_years result.object.dob %}yrs {{ result.object.dob|date:"SHORT_DATE_FORMAT" }}</td>
-    <td>{{ result.object.consent_datetime|date:"SHORT_DATE_FORMAT" }}</td>  
-    <td>{{ result.object.modified|date:"SHORT_DATETIME_FORMAT" }}</td>
+    <td>{% age_in_years result.object.dob %}yrs {{ result.object.dob|date:"Y-m-d" }}</td>
+    <td>{{ result.object.consent_datetime|date:"Y-m-d" }}</td>  
+    <td>{{ result.object.modified|date:"Y-m-d H:i" }}</td>
     <td>{{ result.hostname_created }}</td>
-
 {% endblock listboard_table_columns %}
