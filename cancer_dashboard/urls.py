@@ -29,7 +29,7 @@ checklist_listboard_url_config = UrlConfig(
     identifier_label='screening_identifier',
     identifier_pattern=subject_identifier)
 subject_dashboard_url_config = UrlConfig(
-    url_name='dashboard_url',
+    url_name='subject_dashboard_url',
     view_class=SubjectDashboardView,
     label='subject_dashboard',
     identifier_label='subject_identifier',
@@ -56,31 +56,32 @@ subject_dashboard_url_config = UrlConfig(
 #     return urlpatterns
 #
 #
-# def dashboard_urls():
-#     urlpatterns = []
-#
-#     dashboard_configs = [('dashboard_url', SubjectDashboardView, 'dashboard')]
-#
-#     for dashboard_url_name, dashboard_view_class, label in dashboard_configs:
-#         urlpatterns.extend([
-#             re_path(r'^' + label + '/'
-#                     '(?P<subject_identifier>' + subject_identifier + ')/'
-#                     '(?P<appointment>' + UUID_PATTERN.pattern + ')/',
-#                     dashboard_view_class.as_view(), name=dashboard_url_name),
-#             re_path(r'^' + label + '/'
-#                     '(?P<subject_identifier>' + UUID_PATTERN.pattern + ')/',
-#                     dashboard_view_class.as_view(), name=dashboard_url_name),
-#             re_path(r'^' + label + '/'
-#                     '(?P<subject_identifier>' + subject_identifier + ')/',
-#                     dashboard_view_class.as_view(), name=dashboard_url_name),
-#             re_path(r'^' + label + '/'
-#                     '(?P<subject_identifier>' + subject_identifier + ')/'
-#                     '(?P<schedule_name>' + 'schedule1' + ')/',
-#                     dashboard_view_class.as_view(), name=dashboard_url_name),
-#         ])
-#     return urlpatterns
-#
-#
+def dashboard_urls():
+    urlpatterns = []
+
+    dashboard_configs = [
+        ('subject_dashboard_url', SubjectDashboardView, 'dashboard')]
+
+    for dashboard_url_name, dashboard_view_class, label in dashboard_configs:
+        urlpatterns.extend([
+            re_path(r'^' + label + '/'
+                    '(?P<subject_identifier>' + subject_identifier + ')/'
+                    '(?P<appointment>' + UUID_PATTERN.pattern + ')/',
+                    dashboard_view_class.as_view(), name=dashboard_url_name),
+            re_path(r'^' + label + '/'
+                    '(?P<subject_identifier>' + UUID_PATTERN.pattern + ')/',
+                    dashboard_view_class.as_view(), name=dashboard_url_name),
+            re_path(r'^' + label + '/'
+                    '(?P<subject_identifier>' + subject_identifier + ')/',
+                    dashboard_view_class.as_view(), name=dashboard_url_name),
+            re_path(r'^' + label + '/'
+                    '(?P<subject_identifier>' + subject_identifier + ')/'
+                    '(?P<schedule_name>' + 'schedule1' + ')/',
+                    dashboard_view_class.as_view(), name=dashboard_url_name),
+        ])
+    return urlpatterns
+
+
 def checklist_listboard_urls():
     urlpatterns = []
 
@@ -107,6 +108,7 @@ def checklist_listboard_urls():
 urlpatterns = []
 urlpatterns += subject_listboard_url_config.listboard_urls
 urlpatterns += subject_dashboard_url_config.dashboard_urls
+# urlpatterns += dashboard_urls()
 urlpatterns += checklist_listboard_url_config.listboard_urls
 # urlpatterns += checklist_listboard_urls()
 

@@ -31,18 +31,6 @@ class EnrollmentCheckListBoardView(EdcBaseViewMixin,
     paginate_by = 10
     search_form_url = 'checklist_listboard_url'
 
-#     model = 'cancer_subject.enrollmentchecklist'
-#     model_wrapper_cls = EnrollmentChecklistModelWrapper
-#     listboard_url_name = django_apps.get_app_config(
-#         'cancer_dashboard').checklist_listboard_url_name
-#     paginate_by = 10
-#     app_config_name = 'cancer_dashboard'
-#     ordering = '-modified'
-#     listboard_view_filters = ListboardViewFilters()
-#
-#     navbar_name = 'cancer_dashboard'
-#     navbar_selected_item = 'enrollment_checklist'
-
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)

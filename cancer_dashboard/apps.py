@@ -7,7 +7,7 @@ class AppConfig(DjangoAppConfig):
     admin_site_name = 'cancer_subject_admin'
     base_template_name = 'edc_base/base.html'
     dashboard_template_name = 'cancer_dashboard/subject/dashboard.html'
-    dashboard_url_name = 'cancer_dashboard:dashboard_url'
+    dashboard_url_name = 'cancer_dashboard:subject_dashboard_url'
 
     listboard_template_name = 'cancer_dashboard/subject/listboard.html'
     listboard_url_name = 'cancer_dashboard:consent_listboard_url'

@@ -16,7 +16,7 @@ class DashboardView(
         EdcBaseViewMixin, SubjectDashboardViewMixin,
         NavbarViewMixin, BaseDashboardView):
 
-    dashboard_url = 'dashboard_url'
+    subject_dashboard_url = 'subject_dashboard_url'
     dashboard_template = 'subject_dashboard_template'
     appointment_model = 'edc_appointment.appointment'
     appointment_model_wrapper_cls = AppointmentModelWrapper

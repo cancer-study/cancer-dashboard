@@ -1,13 +1,6 @@
 {% extends "edc_dashboard/listboard.html" %}
 {% load edc_base_extras %}
 
-{% block listboard_panel %}
-    <a title="add enrollment checklist" class="btn btn-sm btn-default" role="button" 
-    href="{{ enrollment_checklist_add_url }}?next={{ listboard_url_name }}">
-        <i class="fa fa-plus fa-sm"></i> Add Enrollment Checklist
-</a>
-{% endblock listboard_panel %}
-
 {% block listboard_table_header %}
 
     <!-- begin results header -->
@@ -16,7 +9,7 @@
         <th></th>
         <th>Eligible</th>
         <th>Subject Identifier</th>
-        <th>Age</th>
+        <th>Name</th>
         <th>Modified</th>
         <th>Host</th>
     <!-- end results header -->
@@ -34,16 +27,10 @@
     
     {% if not result.eligible %}
         Not Eligible
-    {% elif result.consent %}
+    {% elif result%}
          <a class="btn btn-success btn-sm" role="button"   
-        title="Go to subject's dashboard" href="/subject/dashboard/{{result.consent.subject_identifier}}/">
-        <i class="fa fa-user-circle-o fa-sm"></i> Dashboard</a>
-    {% else %}
-         <a title="Consent to participate"
-            class="btn btn-warning btn-sm"
-                href="{{ result.consent.href }}">
-             Consent (v{{ subject_screening.consent.version }})
-         </a>
+            title="Go to subject's dashboard" href="/subject/dashboard/{{result.consent.subject_identifier}}/">
+           <i class="fa fa-user-circle-o fa-sm"></i> Dashboard</a>
     {% endif %}
     </td>
 {% endblock listboard_table_button_column %}
@@ -57,9 +44,8 @@
             <span class="text text-success"><i class="fa fa-check-circle fa-fw" title="Eligible"></i></span> Eligible
         {% endif %}
      </td>
-    <td>{{ result.object.subject_identifier }} </td>
-    <td>{{ result.first_name }} | {{ result.initials }}</td>
-    <td>{{ result.first_name }} | {{ result.initials }}</td>
+    <td>{{ result.subject_identifier }} </td>
+    <td>{{ result.consent_model_obj.first_name }} {{ result.consent_model_obj.initials }}</td>
     <td>{{ result.object.modified|date:"Y-m-d H:i" }}</td>  
     <td>{{ result.hostname_created }}</td>
 {% endblock listboard_table_columns %}
