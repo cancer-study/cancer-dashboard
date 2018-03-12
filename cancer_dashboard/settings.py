@@ -136,7 +136,7 @@ GIT_DIR = BASE_DIR
 
 DASHBOARD_URL_NAMES = {
     'consent_listboard_url': 'cancer_dashboard:consent_listboard_url',
-    'checklist_listboard_url': 'cancer_dashboard:checklist_listboard_url',
+    'subject_listboard_url': 'cancer_dashboard:checklist_listboard_url',
     'dashboard_url': 'cancer_dashboard:subject_dashboard_url',
 }
 

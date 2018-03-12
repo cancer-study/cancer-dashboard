@@ -34,7 +34,7 @@
     </a>
     {% if not result.enrollment_checklist.id %}
          <a class="btn btn-warning btn-sm" role="button"   
-        title="Add Enrollment Checklist" href="{{ result.enrollment_checklist_add_url }}?next={{ checklist_listboard_url }}&subject_identifier={{result.object.subject_identifier}}">
+        title="Add Enrollment Checklist" href="{{ result.enrollment_checklist_add_url }}?next={{ subject_listboard_url }}&subject_identifier={{result.object.subject_identifier}}">
         Add Enrollment Checklist</a>
     {% else %}
         <a id="subject_dashboard_{{ subject_identifier }}" class="btn btn-primary btn-sm" role="button"   

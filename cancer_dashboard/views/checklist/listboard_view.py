@@ -18,7 +18,7 @@ class EnrollmentCheckListBoardView(EdcBaseViewMixin, NavbarViewMixin,
                                    ListboardFilterViewMixin, ListboardView):
 
     listboard_template = 'checklist_listboard_template'
-    listboard_url = 'checklist_listboard_url'
+    listboard_url = 'subject_listboard_url'
     listboard_panel_style = 'info'
     listboard_fa_icon = "fa-user-plus"
 
@@ -30,7 +30,7 @@ class EnrollmentCheckListBoardView(EdcBaseViewMixin, NavbarViewMixin,
     navbar_selected_item = 'enrollment_checklist'
     ordering = '-modified'
     paginate_by = 10
-    search_form_url = 'checklist_listboard_url'
+    search_form_url = 'subject_listboard_url'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
