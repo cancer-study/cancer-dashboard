@@ -7,13 +7,14 @@ from django.utils.decorators import method_decorator
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_dashboard.view_mixins import ListboardFilterViewMixin
 from edc_dashboard.views import ListboardView
+from edc_navbar import NavbarViewMixin
 
 from cancer_dashboard.views.checklist.filters import ListboardViewFilters
 
 from ...model_wrappers import EnrollmentChecklistModelWrapper
 
 
-class EnrollmentCheckListBoardView(EdcBaseViewMixin,
+class EnrollmentCheckListBoardView(EdcBaseViewMixin, NavbarViewMixin,
                                    ListboardFilterViewMixin, ListboardView):
 
     listboard_template = 'checklist_listboard_template'

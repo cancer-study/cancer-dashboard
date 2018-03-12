@@ -6,6 +6,8 @@ from edc_dashboard.views import DashboardView as BaseDashboardView
 from edc_navbar import NavbarViewMixin
 from edc_subject_dashboard.view_mixins import SubjectDashboardViewMixin
 
+
+from .visit_schedule_view_mixin import VisitScheduleViewMixin
 # from ....model_wrappers import CrfModelWrapper, RequisitionModelWrapper
 from ....model_wrappers import SubjectVisitModelWrapper, SubjectConsentModelWrapper
 from ....model_wrappers import AppointmentModelWrapper, SubjectLocatorModelWrapper
@@ -13,10 +15,11 @@ from ....model_wrappers import AppointmentModelWrapper, SubjectLocatorModelWrapp
 
 
 class DashboardView(
-        EdcBaseViewMixin, SubjectDashboardViewMixin,
+        EdcBaseViewMixin, VisitScheduleViewMixin,
+        SubjectDashboardViewMixin,
         NavbarViewMixin, BaseDashboardView):
 
-    subject_dashboard_url = 'subject_dashboard_url'
+    dashboard_url = 'subject_dashboard_url'
     dashboard_template = 'subject_dashboard_template'
     appointment_model = 'edc_appointment.appointment'
     appointment_model_wrapper_cls = AppointmentModelWrapper

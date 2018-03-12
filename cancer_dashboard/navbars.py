@@ -3,7 +3,7 @@ from django.conf import settings
 from edc_navbar import NavbarItem, site_navbars, Navbar
 
 
-no_url_namespace = settings.APP_NAME == 'cancer_dashboard'
+no_url_namespace = True if settings.APP_NAME == 'cancer_dashboard' else False
 
 
 cancer_dashboard = Navbar(name='cancer_dashboard')

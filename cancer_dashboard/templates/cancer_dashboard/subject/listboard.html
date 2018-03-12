@@ -8,7 +8,6 @@
 </a>
 {% endblock listboard_panel %}
 
-partici
 {% block listboard_table_header %}
 
     <!-- begin results header -->
@@ -38,9 +37,9 @@ partici
         title="Add Enrollment Checklist" href="{{ result.enrollment_checklist_add_url }}?next={{ checklist_listboard_url }}&subject_identifier={{result.object.subject_identifier}}">
         Add Enrollment Checklist</a>
     {% else %}
-        <a class="btn btn-success btn-sm" role="button"   
-            title="Go to subject's dashboard" href="/subject/dashboard/{{result.consent.subject_identifier}}/">
-           <i class="fa fa-user-circle-o fa-sm"></i> Dashboard</a>
+        <a id="subject_dashboard_{{ subject_identifier }}" class="btn btn-primary btn-sm" role="button"   
+            title="Go to subject's dashboard" href="{% url subject_dashboard_url result.subject_identifier%}">
+            <i class="fa fa-user-circle-o fa-sm"></i> Dashboard  <i class="fa fa-mail-forward"></i></a>
     {% endif %}
 </td>
 {% endblock listboard_table_button_column %}
