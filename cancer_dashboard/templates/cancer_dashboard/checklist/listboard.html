@@ -19,18 +19,18 @@
 
 {% block listboard_table_button_column %}
     <td style="white-space: nowrap">
-    <a title="Subject Eligibility"
-       class="btn btn-success btn-sm"
+    <a title="Subject Eligibility" role="button"
+       class="btn btn-default btn-sm"
            href="{{ result.href }}">
-        Edit
+       <i class="fa fa-pencil fa-sm"></i>
     </a>
     
     {% if not result.eligible %}
         Not Eligible
     {% elif result%}
-         <a class="btn btn-success btn-sm" role="button"   
+         <a id="subject_dashboard_{{ subject_identifier }}" class="btn btn-primary btn-sm" role="button"   
             title="Go to subject's dashboard" href="{% url subject_dashboard_url result.subject_identifier%}">
-           <i class="fa fa-user-circle-o fa-sm"></i> Dashboard</a>
+           <i class="fa fa-user-circle-o fa-sm"></i> Dashboard <i class="fa fa-mail-forward"></i></a>
     {% endif %}
     </td>
 {% endblock listboard_table_button_column %}
