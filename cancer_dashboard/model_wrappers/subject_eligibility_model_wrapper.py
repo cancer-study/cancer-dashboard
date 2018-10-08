@@ -8,12 +8,12 @@ from edc_model_wrapper import ModelWrapper
 from .subject_consent_model_wrapper import SubjectConsentModelWrapper
 
 
-class EnrollmentChecklistModelWrapper(ConsentModelWrapperMixin, ModelWrapper):
+class SubjectEligibilityModelWrapper(ConsentModelWrapperMixin, ModelWrapper):
 
     consent_model_wrapper_cls = SubjectConsentModelWrapper
-    model = 'cancer_subject.enrollmentchecklist'
+    model = 'cancer_subject.subjecteligibility'
     next_url_name = django_apps.get_app_config(
-        'cancer_dashboard').checklist_listboard_url_name
+        'cancer_dashboard').screening_listboard_url_name
     next_url_attrs = ['subject_identifier']
     querystring_attrs = ['gender']
 

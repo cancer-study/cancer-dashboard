@@ -5,7 +5,7 @@ from django.urls import path, re_path
 from edc_constants.constants import UUID_PATTERN
 from edc_dashboard import UrlConfig
 
-from cancer_dashboard.views.checklist import EnrollmentCheckListBoardView
+from cancer_dashboard.views.screening import SubjectEligibilityListBoardView
 
 from .patterns import subject_identifier
 from .views import SubjectListboardView, SubjectDashboardView
@@ -23,8 +23,8 @@ subject_listboard_url_config = UrlConfig(
     identifier_label='subject_identifier',
     identifier_pattern=subject_identifier)
 checklist_listboard_url_config = UrlConfig(
-    url_name='checklist_listboard_url',
-    view_class=EnrollmentCheckListBoardView,
+    url_name='screening_listboard_url',
+    view_class=SubjectEligibilityListBoardView,
     label='screening_listboard',
     identifier_label='screening_identifier',
     identifier_pattern=subject_identifier)
@@ -36,26 +36,6 @@ subject_dashboard_url_config = UrlConfig(
     identifier_pattern=subject_identifier)
 
 
-# def listboard_urls():
-#     urlpatterns = []
-#     listboard_configs = [
-#         ('consent_listboard_url', SubjectListboardView, 'listboard')]
-#     for listboard_url_name, listboard_view_class, label in listboard_configs:
-#         urlpatterns.extend([
-#             re_path(r'^' + label + '/'
-#                     '(?P<subject_identifier>' + subject_identifier + ')/'
-#                     '(?P<page>\d+)/',
-#                     listboard_view_class.as_view(), name=listboard_url_name),
-#             re_path(r'^' + label + '/'
-#                     '(?P<subject_identifier>' + subject_identifier + ')/',
-#                     listboard_view_class.as_view(), name=listboard_url_name),
-#             path(r'^' + label + '/<int:page>/',
-#                  listboard_view_class.as_view(), name=listboard_url_name),
-#             path(r'^' + label + '/',
-#                  listboard_view_class.as_view(), name=listboard_url_name)])
-#     return urlpatterns
-#
-#
 def dashboard_urls():
     urlpatterns = []
 
@@ -86,7 +66,7 @@ def checklist_listboard_urls():
     urlpatterns = []
 
     listboard_configs = [
-        ('checklist_listboard_url', EnrollmentCheckListBoardView, 'checklist_listboard')]
+        ('screening    _listboard_url', SubjectEligibilityListBoardView, 'screening_listboard')]
     for listboard_url_name, listboard_view_class, label in listboard_configs:
         urlpatterns.extend([
             re_path(r'^' + label + '/'

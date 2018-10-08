@@ -9,25 +9,25 @@ from edc_dashboard.view_mixins import ListboardFilterViewMixin
 from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 
-from cancer_dashboard.views.checklist.filters import ListboardViewFilters
+from cancer_dashboard.views.screening.filters import ListboardViewFilters
 
-from ...model_wrappers import EnrollmentChecklistModelWrapper
+from ...model_wrappers import SubjectEligibilityModelWrapper
 
 
-class EnrollmentCheckListBoardView(EdcBaseViewMixin, NavbarViewMixin,
-                                   ListboardFilterViewMixin, ListboardView):
+class SubjectEligibilityListBoardView(EdcBaseViewMixin, NavbarViewMixin,
+                                      ListboardFilterViewMixin, ListboardView):
 
-    listboard_template = 'checklist_listboard_template'
+    listboard_template = 'screening_listboard_template'
     listboard_url = 'subject_listboard_url'
     listboard_panel_style = 'info'
     listboard_fa_icon = "fa-user-plus"
 
     app_config_name = 'cancer_dashboard'
     listboard_view_filters = ListboardViewFilters()
-    model = 'cancer_subject.enrollmentchecklist'
-    model_wrapper_cls = EnrollmentChecklistModelWrapper
+    model = 'cancer_subject.subjecteligibility'
+    model_wrapper_cls = SubjectEligibilityModelWrapper
     navbar_name = 'cancer_dashboard'
-    navbar_selected_item = 'enrollment_checklist'
+    navbar_selected_item = 'subject_eligibility'
     ordering = '-modified'
     paginate_by = 10
     search_form_url = 'subject_listboard_url'

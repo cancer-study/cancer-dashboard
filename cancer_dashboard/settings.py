@@ -10,8 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
+import configparser
 import os
+from pathlib import PurePath
 import sys
+
+from django.core.management.color import color_style
+
+style = color_style()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,7 +33,22 @@ SECRET_KEY = 'ftblcrb__%!_r6nl_kn-*u(rwhfeakwv*)j4^%=ltvp&s9^@i9'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+ALLOWED_HOSTS = []
+CONFIG_FILE = '{}.conf'.format(APP_NAME)
+if DEBUG:
+    ETC_DIR = str(PurePath(BASE_DIR).joinpath('etc'))
+else:
+    ETC_DIR = '/etc'
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
+CONFIG_PATH = os.path.join(ETC_DIR, APP_NAME, CONFIG_FILE)
+sys.stdout.write(style.SUCCESS('Reading config from {}\n'.format(CONFIG_PATH)))
+
+config = configparser.RawConfigParser()
+config.read(os.path.join(CONFIG_PATH))
+
+
+SITE_ID = 1
 
 # Application definition
 
@@ -41,37 +62,31 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django_crypto_fields.apps.AppConfig',
     'django_revision.apps.AppConfig',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'edc_action_item.apps.AppConfig',
-    'edc_base.apps.AppConfig',
-    'edc_prn.apps.AppConfig',
-    'edc_pharmacy.apps.AppConfig',
-    'edc_reference.apps.AppConfig',
-    'edc_metadata_rules.apps.AppConfig',
-    'edc_consent.apps.AppConfig',
     'edc_timepoint.apps.AppConfig',
+    'edc_protocol.apps.AppConfig',
     'edc_device.apps.AppConfig',
-    'edc_registration.apps.AppConfig',
-    'edc_visit_schedule.apps.AppConfig',
-    'edc_sync.apps.AppConfig',
-    'edc_sync_files.apps.AppConfig',
-    'cancer_subject.apps.AppConfig',
-    'cancer_dashboard.apps.AppConfig',
-    'cancer_visit_schedule.apps.AppConfig',
+    'edc_navbar.apps.AppConfig',
+    'edc_action_item.apps.AppConfig',
+    'edc_lab.apps.AppConfig',
+    'edc_lab_dashboard.apps.AppConfig',
+    'edc_locator.apps.AppConfig',
+    'edc_identifier.apps.AppConfig',
+    'edc_model_wrapper.apps.AppConfig',
+    'cancer_dashboard.apps.EdcAppointmentAppConfig',
+    'cancer_dashboard.apps.AppConfig'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'edc_dashboard.middleware.DashboardMiddleware',
     'edc_subject_dashboard.middleware.DashboardMiddleware',
+    'edc_dashboard.middleware.DashboardMiddleware',
+    'edc_lab_dashboard.middleware.DashboardMiddleware'
 ]
 
 ROOT_URLCONF = 'cancer_dashboard.urls'
@@ -142,21 +157,30 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, APP_NAME, 'static')
 STATIC_URL = '/static/'
-KEY_PATH = os.path.join(BASE_DIR, 'crypto_fields')
+MEDIA_ROOT = os.path.join(BASE_DIR, APP_NAME, 'media')
+
+MEDIA_URL = '/media/'
+
 GIT_DIR = BASE_DIR
 
+
+DEVICE_ID = '21'
+DEVICE_ROLE = 'Client'
+LABEL_PRINTER = 'label_printer'
+
+
 DASHBOARD_URL_NAMES = {
-    'consent_listboard_url': 'cancer_dashboard:consent_listboard_url',
-    'subject_listboard_url': 'cancer_dashboard:checklist_listboard_url',
-    'dashboard_url': 'cancer_dashboard:subject_dashboard_url',
+    'subject_listboard_url': 'cancer_dashboard:subject_listboard_url',
+    'screening_listboard_url': 'cancer_dashboard:screening_listboard_url',
+    'subject_dashboard_url': 'cancer_dashboard:subject_dashboard_url',
 }
 
 DASHBOARD_BASE_TEMPLATES = {
     'listboard_base_template': 'cancer/base.html',
     'dashboard_base_template': 'cancer/base.html',
-    'checklist_listboard_template': 'cancer_dashboard/checklist/listboard.html',
-    #     'screening_listboard_template': 'cancer_dashboard/screening/listboard.html',
+    'screening_listboard_template': 'cancer_dashboard/screening/listboard.html',
     'subject_listboard_template': 'cancer_dashboard/subject/listboard.html',
     'subject_dashboard_template': 'cancer_dashboard/subject/dashboard.html',
 }
