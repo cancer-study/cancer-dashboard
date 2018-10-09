@@ -1,1 +1,1 @@
-from .listboard_view import SubjectEligibilityListBoardView
+from .listboard_view import ListBoardView
