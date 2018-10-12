@@ -1,51 +1,54 @@
 {% extends "edc_dashboard/listboard.html" %}
+{% load admin_urls %}
 {% load edc_base_extras %}
+{% load cancer_dashboard_extras %}
+             
+{% block listboard_panel %}
+    <a id="subjectscreening_add" title="add screening" class="btn btn-sm btn-default" role="button" 
+        href="{{ subject_screening_add_url }}?next={{ screening_listboard_url }}">
+            <i class="fa fa-plus fa-sm"></i> Add Subject Screening
+    </a>
+{% endblock listboard_panel %}
+
 
 {% block listboard_table_header %}
-
     <!-- begin results header -->
-
-        <th>#</th>
-        <th></th>
-        <th>Eligible</th>
-        <th>Subject Identifier</th>
-        <th>Name</th>
-        <th>Modified</th>
-        <th>Host</th>
+    <th>#</th>
+    <th></th>
+    <th>Screening Identifier</th>
+    <th>Subject Identifier</th>
+    <th>Age</th>
+    <th>User</th>
+    <th>Modified</th>
+    <th>Host</th>
     <!-- end results header -->
-
 {% endblock listboard_table_header %}
 
 
 {% block listboard_table_button_column %}
     <td style="white-space: nowrap">
-    <a title="Subject Eligibility" role="button"
-       class="btn btn-default btn-sm"
-           href="{{ result.href }}">
-       <i class="fa fa-pencil fa-sm"></i>
-    </a>
-    
-    {% if not result.eligible %}
-        Not Eligible
-    {% elif result%}
-         <a id="subject_dashboard_{{ subject_identifier }}" class="btn btn-primary btn-sm" role="button"   
-            title="Go to subject's dashboard" href="{% url subject_dashboard_url result.subject_identifier%}">
-           <i class="fa fa-user-circle-o fa-sm"></i> Dashboard <i class="fa fa-mail-forward"></i></a>
+    <div class="btn-group">
+    {% screening_button result %}
+    {% eligibility_button result %}
+    {% if result.eligible %}
+        {% if result.consent %}
+            {% dashboard_button result %}
+        {% else %}
+            {% consent_button result %}
+        {% endif %}
     {% endif %}
+    </div>
     </td>
 {% endblock listboard_table_button_column %}
 
 
 {% block listboard_table_columns %}
-    <td>
-        {% if not result.eligible %}
-            <span class="text text-danger"><i class="fa fa-check-circle fa-fw" title="Not Eligible"></i></span> Not Eligible
-        {% else %}
-            <span class="text text-success"><i class="fa fa-check-circle fa-fw" title="Eligible"></i></span> Eligible
-        {% endif %}
-     </td>
-    <td>{{ result.subject_identifier }} </td>
-    <td>{{ result.consent_model_obj.first_name }} {{ result.consent_model_obj.initials }}</td>
-    <td>{{ result.object.modified|date:"Y-m-d H:i" }}</td>  
-    <td>{{ result.hostname_created }}</td>
+
+    <td>{{ result.screening_identifier }} </td>
+    <td nowrap>{% if "092" in result.consent.subject_identifier %}{{ result.consent.subject_identifier }}{% endif %}</td>
+    <td nowrap>{{ result.age_in_years }} yrs</td>
+    <td nowrap>{{ result.user_created }}</td>
+    <td nowrap>{{ result.object.modified|date:"SHORT_DATETIME_FORMAT" }}</td>  
+    <td nowrap>{{ result.hostname_created }}</td>
+
 {% endblock listboard_table_columns %}
