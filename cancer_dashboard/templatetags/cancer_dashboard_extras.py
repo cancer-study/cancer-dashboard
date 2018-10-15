@@ -8,8 +8,6 @@ register = template.Library()
 @register.inclusion_tag('cancer_dashboard/buttons/screening_button.html')
 def screening_button(model_wrapper):
     title = ['Edit subject\' screening form.']
-    if model_wrapper.object.mental_status == ABNORMAL:
-        title.append('(Note: mental status is abnormal)')
     return dict(
         screening_identifier=model_wrapper.object.screening_identifier,
         href=model_wrapper.href,
@@ -32,8 +30,6 @@ def eligibility_button(subject_screening_model_wrapper):
 def consent_button(model_wrapper):
     title = ['Consent subject to participate.']
     consent_version = model_wrapper.consent.version
-    if model_wrapper.object.mental_status == ABNORMAL:
-        title.append('(Note: mental status is abnormal)')
     return dict(
         screening_identifier=model_wrapper.object.screening_identifier,
         add_consent_href=model_wrapper.consent.href,
