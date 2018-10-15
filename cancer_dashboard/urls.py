@@ -36,6 +36,7 @@ urlpatterns += subject_dashboard_url_config.dashboard_urls
 if settings.APP_NAME == 'cancer_dashboard':
 
     from django.views.generic.base import RedirectView
+    from edc_base.views import LoginView, LogoutView
 
     from .tests.admin import cancer_test_admin
 
@@ -50,4 +51,7 @@ if settings.APP_NAME == 'cancer_dashboard':
         path('admin/', include('edc_base.auth.urls')),
         path('edc_lab/', include('edc_lab.urls')),
         path('edc_lab_dashboard/', include('edc_lab_dashboard.urls')),
+        path('login', LoginView.as_view(), name='login_url'),
+        path('logout', LogoutView.as_view(
+            pattern_name='login_url'), name='logout_url'),
         path(r'', RedirectView.as_view(url='admin/'), name='home_url')]

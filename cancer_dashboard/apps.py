@@ -4,17 +4,7 @@ from django.conf import settings
 
 class AppConfig(DjangoAppConfig):
     name = 'cancer_dashboard'
-
     admin_site_name = 'cancer_subject_admin'
-    base_template_name = 'edc_base/base.html'
-    dashboard_template_name = 'cancer_dashboard/subject/dashboard.html'
-    dashboard_url_name = 'cancer_dashboard:subject_dashboard_url'
-
-    listboard_template_name = 'cancer_dashboard/subject/listboard.html'
-    listboard_url_name = 'cancer_dashboard:consent_listboard_url'
-
-    screening_listboard_template_name = 'cancer_dashboard/screening/listboard.html'
-    screening_listboard_url_name = 'cancer_dashboard:screening_listboard_url'
 
 
 if settings.APP_NAME == 'cancer_dashboard':

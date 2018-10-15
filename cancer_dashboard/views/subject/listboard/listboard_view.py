@@ -19,9 +19,9 @@ class SubjectConsentListboardView(NavbarViewMixin, EdcBaseViewMixin,
                                   ListboardView):
 
     listboard_template = 'subject_listboard_template'
-    listboard_url = 'consent_listboard_url'
-    listboard_panel_style = 'info'
-    listboard_fa_icon = "fa-user-plus"
+    listboard_url = 'subject_listboard_url'
+    listboard_panel_style = 'success'
+    listboard_fa_icon = "far fa-user-circle"
 
     listboard_view_filters = ListboardViewFilters()
     model = 'cancer_subject.subjectconsent'
@@ -31,7 +31,7 @@ class SubjectConsentListboardView(NavbarViewMixin, EdcBaseViewMixin,
     navbar_selected_item = 'consented_subject'
     ordering = '-modified'
     paginate_by = 10
-    search_form_url = 'consent_listboard_url'
+    search_form_url = 'subject_listboard_url'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
