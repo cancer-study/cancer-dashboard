@@ -13,7 +13,7 @@ class SubjectScreeningModelWrapper(ConsentModelWrapperMixin, ModelWrapper):
     model = 'cancer_screening.subjectscreening'
     next_url_attrs = ['screening_identifier']
     next_url_name = settings.DASHBOARD_URL_NAMES.get('screening_listboard_url')
-    querystring_attrs = ['gender']
+#     querystring_attrs = ['gender']
 
     @property
     def consented(self):
