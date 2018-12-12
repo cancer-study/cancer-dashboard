@@ -18,7 +18,6 @@ class SubjectScreeningModelWrapper(ConsentModelWrapperMixin, ModelWrapper):
     @property
     def consented(self):
         return self.object.subject_identifier
-    
 
     @property
     def subject_identifier(self):
