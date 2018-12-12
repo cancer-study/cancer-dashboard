@@ -17,7 +17,7 @@ if settings.APP_NAME == 'cancer_dashboard':
     class EdcAppointmentAppConfig(BaseEdcAppointmentAppConfig):
         configurations = [
             AppointmentConfig(
-                model='edc_appointment.appointment',
+                model='cancer_subject.appointment',
                 related_visit_model='cancer_dashboard.subjectvisit',
                 appt_type='hospital')]
 

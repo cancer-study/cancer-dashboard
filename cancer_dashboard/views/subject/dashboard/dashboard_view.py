@@ -21,7 +21,7 @@ class DashboardView(
 
     dashboard_url = 'subject_dashboard_url'
     dashboard_template = 'subject_dashboard_template'
-    appointment_model = 'edc_appointment.appointment'
+    appointment_model = 'cancer_subject.appointment'
     appointment_model_wrapper_cls = AppointmentModelWrapper
     consent_model = 'cancer_subject.subjectconsent'
     consent_model_wrapper_cls = SubjectConsentModelWrapper
