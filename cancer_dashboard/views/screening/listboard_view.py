@@ -23,7 +23,7 @@ class ListBoardView(NavbarViewMixin, EdcBaseViewMixin,
     listboard_fa_icon = "fa-user-plus"
 
     listboard_view_filters = ListboardViewFilters()
-    model = 'cancer_screening.subjectscreening'
+    model = 'cancer_subject.subjectscreening'
     model_wrapper_cls = SubjectScreeningModelWrapper
     navbar_name = 'cancer_dashboard'
     navbar_selected_item = 'screened_subject'
@@ -53,3 +53,4 @@ class ListBoardView(NavbarViewMixin, EdcBaseViewMixin,
         q = Q()
         if re.match('^[A-Z]+$', search_term):
             q = Q(first_name__exact=search_term)
+        return q
