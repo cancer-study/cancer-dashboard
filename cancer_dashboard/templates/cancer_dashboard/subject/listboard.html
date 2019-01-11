@@ -1,6 +1,12 @@
 {% extends "edc_dashboard/listboard.html" %}
 {% load edc_base_extras %}
 
+{% block listboard_panel %}
+    <a id="subjectconsent_add" title="add subject consent" class="btn btn-sm btn-default" role="button" 
+        href="{{ subject_consent_add_url }}?next={{ subject_listboard_url }}">
+            <i class="fa fa-plus fa-sm"></i> Add Subject Consent
+    </a>
+{% endblock listboard_panel %}
 
 {% block listboard_table_header %}
 

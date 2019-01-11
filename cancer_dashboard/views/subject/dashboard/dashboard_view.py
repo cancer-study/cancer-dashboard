@@ -1,23 +1,72 @@
-# from django.apps import apps as django_apps
-# from django.contrib.auth.decorators import login_required
-# from django.utils.decorators import method_decorator
+from django.apps import apps as django_apps
+from django.views.generic.base import ContextMixin
+from django.core.exceptions import ObjectDoesNotExist
+
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_dashboard.views import DashboardView as BaseDashboardView
 from edc_navbar import NavbarViewMixin
 from edc_subject_dashboard.view_mixins import SubjectDashboardViewMixin
 
 
-from .visit_schedule_view_mixin import VisitScheduleViewMixin
-# from ....model_wrappers import CrfModelWrapper, RequisitionModelWrapper
-from ....model_wrappers import SubjectVisitModelWrapper, SubjectConsentModelWrapper
-from ....model_wrappers import AppointmentModelWrapper, SubjectLocatorModelWrapper
-# from .base_dashboard_view import BaseDashboardView
+from ....model_wrappers import (
+    SubjectVisitModelWrapper, SubjectConsentModelWrapper,
+    SubjectScreeningModelWrapper, AppointmentModelWrapper,
+    SubjectLocatorModelWrapper)
+
+
+class AddSubjectScreening(ContextMixin):
+
+    @property
+    def subject_screening_model_obj(self):
+        """Returns a subject screening model instance or None.
+        """
+        try:
+            return self.subject_screening_cls.objects.get(**self.subject_screening_options)
+        except ObjectDoesNotExist:
+            return None
+
+    @property
+    def subject_screening(self):
+        """Returns a wrapped saved or unsaved subject screening.
+        """
+        model_obj = self.subject_screening_model_obj or self.subject_screening_cls(
+            **self.create_subject_screening_options)
+        return SubjectScreeningModelWrapper(model_obj=model_obj)
+
+    @property
+    def subject_screening_cls(self):
+        return django_apps.get_model('cancer_subject.subjectscreening')
+
+    @property
+    def create_subject_screening_options(self):
+        """Returns a dictionary of options to create a new
+        unpersisted cancer subject model instance.
+        """
+        options = dict(
+            subject_identifier=self.subject_identifier)
+        return options
+
+    @property
+    def subject_screening_options(self):
+        """Returns a dictionary of options to get an existing
+        subject screening model instance.
+        """
+        options = dict(
+            subject_identifier=self.subject_identifier)
+        return options
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(subject_screening=self.subject_screening)
+        return context
+
 
 
 class DashboardView(
-        EdcBaseViewMixin, VisitScheduleViewMixin,
-        SubjectDashboardViewMixin,
-        NavbarViewMixin, BaseDashboardView):
+        AddSubjectScreening, EdcBaseViewMixin,
+        SubjectDashboardViewMixin, NavbarViewMixin,
+        BaseDashboardView):
 
     dashboard_url = 'subject_dashboard_url'
     dashboard_template = 'subject_dashboard_template'
@@ -27,26 +76,7 @@ class DashboardView(
     consent_model_wrapper_cls = SubjectConsentModelWrapper
     navbar_name = 'cancer_dashboard'
     navbar_selected_item = 'consented_subject'
-#     offstudy_model = 'cancer_subject.subjectoffstudy'
-#     crf_model_wrapper_cls = CrfModelWrapper
-#     requisition_model_wrapper_cls = RequisitionModelWrapper
     subject_locator_model = 'edc_locator.subjectlocator'
     subject_locator_model_wrapper_cls = SubjectLocatorModelWrapper
     visit_model_wrapper_cls = SubjectVisitModelWrapper
-
-#     @method_decorator(login_required)
-#     def dispatch(self, *args, **kwargs):
-#         return super().dispatch(*args, **kwargs)
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         dashboard_url_name = django_apps.get_app_config(
-#             'cancer_dashboard').dashboard_url_name
-#         context.update(
-#             subject_offstudy=self.subject_offstudy,
-#             dashboard_url_name=dashboard_url_name)
-#         return context
-#
-#     def offstudy_required(self):
-#         """ OffStudy evaluation criteria, result True or False. """
-#         return False
+    special_forms_include_value = "cancer_dashboard/subject/dashboard/special_forms.html"

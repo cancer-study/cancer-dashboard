@@ -1,6 +1,5 @@
 from django import template
 from django.conf import settings
-from edc_constants.constants import ABNORMAL
 
 register = template.Library()
 
@@ -10,7 +9,9 @@ def screening_button(model_wrapper):
     title = ['Edit subject\' screening form.']
     return dict(
         screening_identifier=model_wrapper.object.screening_identifier,
-        href=model_wrapper.href,
+        subject_identifier=model_wrapper.object.subject_identifier,
+        add_subject_screening_href=model_wrapper.href,
+        subject_screening_model_obj=model_wrapper.subject_screening_model_obj,
         title=' '.join(title))
 
 

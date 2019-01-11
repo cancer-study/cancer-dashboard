@@ -21,14 +21,7 @@
     <td style="white-space: nowrap">
     <div class="btn-group">
     {% screening_button result %}
-    {% eligibility_button result %}
-    {% if result.eligible %}
-        {% if result.consent %}
-            {% dashboard_button result %}
-        {% else %}
-            {% consent_button result %}
-        {% endif %}
-    {% endif %}
+    {% dashboard_button result %}
     </div>
     </td>
 {% endblock listboard_table_button_column %}
@@ -37,7 +30,7 @@
 {% block listboard_table_columns %}
 
     <td>{{ result.screening_identifier }} </td>
-    <td nowrap>{% if "092" in result.consent.subject_identifier %}{{ result.consent.subject_identifier }}{% endif %}</td>
+    <td nowrap>{{ result.object.subject_identifier }}</td>
     <td nowrap>{{ result.age_in_years }} yrs</td>
     <td nowrap>{{ result.user_created }}</td>
     <td nowrap>{{ result.object.modified|date:"SHORT_DATETIME_FORMAT" }}</td>  

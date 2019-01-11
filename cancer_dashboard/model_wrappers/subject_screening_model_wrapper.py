@@ -1,43 +1,44 @@
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from edc_consent import ConsentModelWrapperMixin
+
 from edc_model_wrapper import ModelWrapper
 
-from .subject_consent_model_wrapper import SubjectConsentModelWrapper
 
+class SubjectScreeningModelWrapper(ModelWrapper):
 
-class SubjectScreeningModelWrapper(ConsentModelWrapperMixin, ModelWrapper):
-
-    consent_model_wrapper_cls = SubjectConsentModelWrapper
-    model = 'cancer_screening.subjectscreening'
-    next_url_attrs = ['screening_identifier', 'subject_identifier']
-    next_url_name = settings.DASHBOARD_URL_NAMES.get('screening_listboard_url')
-#     querystring_attrs = ['gender']
+    model = 'cancer_subject.subjectscreening'
+    next_url_attrs = ['subject_identifier']
+    next_url_name = settings.DASHBOARD_URL_NAMES.get(
+        'subject_dashboard_url')
 
     @property
-    def consented(self):
-        return self.object.subject_identifier
+    def subject_screening_model_obj(self):
+        """Returns a subject screening model instance or None.
+        """
+        try:
+            return self.subject_screening_cls.objects.get(**self.subject_screening_options)
+        except ObjectDoesNotExist:
+            return None
 
     @property
-    def subject_identifier(self):
-        return self.object.subject_identifier
+    def subject_screening_cls(self):
+        return django_apps.get_model('cancer_subject.subjectscreening')
 
     @property
-    def create_consent_options(self):
-        options = super().create_consent_options
-        options.update(screening_identifier=self.object.screening_identifier)
+    def create_subject_screening_options(self):
+        """Returns a dictionary of options to create a new
+        unpersisted cancer subject model instance.
+        """
+        options = dict(
+            subject_identifier=self.subject_identifier)
         return options
 
     @property
-    def consent_options(self):
-        return dict(screening_identifier=self.object.screening_identifier)
-
-    @property
-    def consent_model_obj(self):
-        consent_model_cls = django_apps.get_model(
-            self.consent_model_wrapper_cls.model)
-        try:
-            return consent_model_cls.objects.get(**self.consent_options)
-        except ObjectDoesNotExist:
-            return None
+    def subject_screening_options(self):
+        """Returns a dictionary of options to get an existing
+        subject screening model instance.
+        """
+        options = dict(
+            subject_identifier=self.subject_identifier)
+        return options
