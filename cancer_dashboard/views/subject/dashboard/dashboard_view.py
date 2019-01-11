@@ -1,12 +1,11 @@
 from django.apps import apps as django_apps
-from django.views.generic.base import ContextMixin
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.views.generic.base import ContextMixin
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_dashboard.views import DashboardView as BaseDashboardView
-from edc_navbar import NavbarViewMixin
 from edc_subject_dashboard.view_mixins import SubjectDashboardViewMixin
 
+from edc_navbar import NavbarViewMixin
 
 from ....model_wrappers import (
     SubjectVisitModelWrapper, SubjectConsentModelWrapper,
@@ -55,12 +54,10 @@ class AddSubjectScreening(ContextMixin):
             subject_identifier=self.subject_identifier)
         return options
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(subject_screening=self.subject_screening)
         return context
-
 
 
 class DashboardView(

@@ -1,5 +1,6 @@
 {% extends "edc_dashboard/listboard.html" %}
 {% load edc_base_extras %}
+{% load cancer_dashboard_extras %}
 
 {% block listboard_panel %}
     <a id="subjectconsent_add" title="add subject consent" class="btn btn-sm btn-default" role="button" 
@@ -23,7 +24,20 @@
 
 {% endblock listboard_table_header %}
 
-
+{% block listboard_table_button_column %}
+    <td style="white-space: nowrap">
+	    <div class="btn-group">
+		    {% consent_button result %}
+		    {% if not result.is_consented %} <!-- check if consented  -->
+		        {% screening_button result %}
+		    {% endif %}
+		    {% if result.subject_screening.object.eligible %}
+		           {% dashboard_button result %}
+		    {% endif %}
+	    </div>
+    </td>
+{% endblock listboard_table_button_column %}
+        
 {% block listboard_table_columns %}
 
     <td>{{ result.subject_identifier }}
