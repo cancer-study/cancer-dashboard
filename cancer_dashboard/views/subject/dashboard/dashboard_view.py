@@ -77,3 +77,13 @@ class DashboardView(
     subject_locator_model_wrapper_cls = SubjectLocatorModelWrapper
     visit_model_wrapper_cls = SubjectVisitModelWrapper
     special_forms_include_value = "cancer_dashboard/subject/dashboard/special_forms.html"
+
+    @property
+    def appointments(self):
+        """Returns a Queryset of all appointments for this subject.
+        """
+        if not self._appointments:
+            self._appointments = self.appointment_model_cls.objects.filter(
+                subject_identifier=self.subject_identifier).order_by(
+                    'visit_code')
+        return self._appointments
