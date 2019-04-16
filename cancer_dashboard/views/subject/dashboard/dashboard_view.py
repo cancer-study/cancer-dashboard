@@ -2,10 +2,13 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic.base import ContextMixin
 from edc_base.view_mixins import EdcBaseViewMixin
+from edc_action_item.site_action_items import site_action_items
 from edc_dashboard.views import DashboardView as BaseDashboardView
 from edc_subject_dashboard.view_mixins import SubjectDashboardViewMixin
 
 from edc_navbar import NavbarViewMixin
+
+SUBJECT_LOCATOR_ACTION = 'submit-subject-locator'
 
 from ....model_wrappers import (
     SubjectVisitModelWrapper, SubjectConsentModelWrapper,
@@ -73,7 +76,7 @@ class DashboardView(
     consent_model_wrapper_cls = SubjectConsentModelWrapper
     navbar_name = 'cancer_dashboard'
     navbar_selected_item = 'consented_subject'
-    subject_locator_model = 'edc_locator.subjectlocator'
+    subject_locator_model = 'cancer_subject.subjectlocator'
     subject_locator_model_wrapper_cls = SubjectLocatorModelWrapper
     visit_model_wrapper_cls = SubjectVisitModelWrapper
     special_forms_include_value = "cancer_dashboard/subject/dashboard/special_forms.html"
@@ -87,3 +90,22 @@ class DashboardView(
                 subject_identifier=self.subject_identifier).order_by(
                     'visit_code')
         return self._appointments
+
+    def get_subject_locator_or_message(self):
+        obj = None
+        subject_identifier = self.kwargs.get('subject_identifier')
+        try:
+            obj = self.subject_locator_model_cls.objects.get(
+                subject_identifier=subject_identifier)
+        except ObjectDoesNotExist:
+            action_cls = site_action_items.get(
+                self.subject_locator_model_cls.action_name)
+            action_item_model_cls = action_cls.action_item_model_cls()
+            try:
+                action_item_model_cls.objects.get(
+                    subject_identifier=subject_identifier,
+                    action_type__name=SUBJECT_LOCATOR_ACTION)
+            except ObjectDoesNotExist:
+                action_cls(
+                    subject_identifier=subject_identifier)
+        return obj
