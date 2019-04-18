@@ -5,11 +5,8 @@ from edc_base.view_mixins import EdcBaseViewMixin
 from edc_action_item.site_action_items import site_action_items
 from edc_dashboard.views import DashboardView as BaseDashboardView
 from edc_subject_dashboard.view_mixins import SubjectDashboardViewMixin
-
 from edc_navbar import NavbarViewMixin
-
-SUBJECT_LOCATOR_ACTION = 'submit-subject-locator'
-
+from cancer_subject.action_items import SUBJECT_LOCATOR_ACTION
 from ....model_wrappers import (
     SubjectVisitModelWrapper, SubjectConsentModelWrapper,
     SubjectScreeningModelWrapper, AppointmentModelWrapper,
