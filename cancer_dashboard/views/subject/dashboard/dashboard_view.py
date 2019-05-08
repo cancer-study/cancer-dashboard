@@ -1,12 +1,17 @@
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from django.views.generic.base import ContextMixin
 from edc_base.view_mixins import EdcBaseViewMixin
-from edc_action_item.site_action_items import site_action_items
+from edc_constants.constants import OFF_STUDY
 from edc_dashboard.views import DashboardView as BaseDashboardView
 from edc_subject_dashboard.view_mixins import SubjectDashboardViewMixin
-from edc_navbar import NavbarViewMixin
+
+from cancer_prn.action_items import DEATH_REPORT_ACTION, SUBJECT_OFFSTUDY_ACTION
 from cancer_subject.action_items import SUBJECT_LOCATOR_ACTION
+from edc_action_item.site_action_items import site_action_items
+from edc_navbar import NavbarViewMixin
+
 from ....model_wrappers import (
     SubjectVisitModelWrapper, SubjectConsentModelWrapper,
     SubjectScreeningModelWrapper, AppointmentModelWrapper,
@@ -88,6 +93,11 @@ class DashboardView(
                     'visit_code')
         return self._appointments
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.get_subject_offstudy_or_message()
+        return context
+
     def get_subject_locator_or_message(self):
         obj = None
         subject_identifier = self.kwargs.get('subject_identifier')
@@ -106,3 +116,41 @@ class DashboardView(
                 action_cls(
                     subject_identifier=subject_identifier)
         return obj
+
+    def get_subject_offstudy_or_message(self):
+        obj = None
+        subject_visit_cls = django_apps.get_model(
+            'cancer_subject.subjectvisit')
+        subject_offstudy_cls = django_apps.get_model(
+            'cancer_prn.subjectoffstudy')
+        subject_death_cls = django_apps.get_model(
+            'cancer_prn.deathreport')
+        subject_identifier = self.kwargs.get('subject_identifier')
+        obj = subject_visit_cls.objects.filter(
+            Q(reason=OFF_STUDY) | Q(reason='Death'),
+            appointment__subject_identifier=subject_identifier)
+        if obj:
+            if obj[0].reason == 'Death':
+                self.action_cls_item_creator(
+                    subject_identifier=subject_identifier,
+                    action_cls=subject_death_cls,
+                    action_type=DEATH_REPORT_ACTION)
+            else:
+                self.action_cls_item_creator(
+                    subject_identifier=subject_identifier,
+                    action_cls=subject_offstudy_cls,
+                    action_type=SUBJECT_OFFSTUDY_ACTION)
+        return obj
+
+    def action_cls_item_creator(
+            self, subject_identifier=None, action_cls=None, action_type=None):
+        action_cls = site_action_items.get(
+            action_cls.action_name)
+        action_item_model_cls = action_cls.action_item_model_cls()
+        try:
+            action_item_model_cls.objects.get(
+                subject_identifier=subject_identifier,
+                action_type__name=action_type)
+        except ObjectDoesNotExist:
+            action_cls(
+                subject_identifier=subject_identifier)
