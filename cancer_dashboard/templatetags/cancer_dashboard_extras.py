@@ -14,6 +14,15 @@ def screening_button(model_wrapper):
         title=' '.join(title))
 
 
+@register.inclusion_tag('cancer_dashboard/buttons/subject_locator_button.html')
+def subject_locator_button(model_wrapper):
+    title = ['Edit Locator.']
+    return dict(
+        subject_identifier=model_wrapper.subject_locator.subject_identifier,
+        add_subject_locator_href=model_wrapper.subject_locator.href,
+        subject_locator_model_obj=model_wrapper.subject_locator_model_obj,
+        title=' '.join(title))
+
 # @register.inclusion_tag('cancer_dashboard/buttons/eligibility_button.html')
 # def eligibility_button(subject_screening_model_wrapper):
 #     comment = []
