@@ -59,9 +59,13 @@
 	      	
 	      	<b>Home Village </b> {{locator_obj.home_village}} <br>
 	      	
-	      	
-	      	Updated on by 
-	      	
+	      	<br>
+            {% if locator_obj.user_modified %}
+            	Updated on {{ locator_obj.modified|date:"SHORT_DATE_FORMAT" }} by {{ locator_obj.user_modified }}
+            
+            {% else %}
+            	Created on {{ locator_obj.created|date:"SHORT_DATE_FORMAT" }} by {{ locator_obj.user_created }}
+            {% endif %}
 	      	
 	      	
 	      </small>
