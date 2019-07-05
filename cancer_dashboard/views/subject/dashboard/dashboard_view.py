@@ -2,15 +2,15 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.views.generic.base import ContextMixin
+from edc_action_item.site_action_items import site_action_items
 from edc_base.view_mixins import EdcBaseViewMixin
-from edc_constants.constants import OFF_STUDY
+from edc_constants.constants import OFF_STUDY, YES
 from edc_dashboard.views import DashboardView as BaseDashboardView
+from edc_navbar import NavbarViewMixin
 from edc_subject_dashboard.view_mixins import SubjectDashboardViewMixin
 
 from cancer_prn.action_items import DEATH_REPORT_ACTION, SUBJECT_OFFSTUDY_ACTION
 from cancer_subject.action_items import SUBJECT_LOCATOR_ACTION
-from edc_action_item.site_action_items import site_action_items
-from edc_navbar import NavbarViewMixin
 
 from ....model_wrappers import (
     SubjectVisitModelWrapper, SubjectConsentModelWrapper,
@@ -96,15 +96,27 @@ class DashboardView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.get_subject_offstudy_or_message()
+        locator_obj = self.get_locator_info()
+        context.update(
+            YES=YES,
+            locator_obj=locator_obj)
         return context
 
-    def get_subject_locator_or_message(self):
-        obj = None
+    def get_locator_info(self):
+
         subject_identifier = self.kwargs.get('subject_identifier')
         try:
             obj = self.subject_locator_model_cls.objects.get(
                 subject_identifier=subject_identifier)
         except ObjectDoesNotExist:
+            return None
+        return obj
+
+    def get_subject_locator_or_message(self):
+        obj = self.get_locator_info()
+        subject_identifier = self.kwargs.get('subject_identifier')
+
+        if not obj:
             action_cls = site_action_items.get(
                 self.subject_locator_model_cls.action_name)
             action_item_model_cls = action_cls.action_item_model_cls()

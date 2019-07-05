@@ -4,8 +4,10 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from edc_model_wrapper import ModelWrapper
 
+from .subject_locator_wrapper_mixin import subjectLocatorModelWrapperMixin
 
-class SubjectScreeningModelWrapper(ModelWrapper):
+
+class SubjectScreeningModelWrapper(subjectLocatorModelWrapperMixin, ModelWrapper):
 
     model = 'cancer_subject.subjectscreening'
     next_url_attrs = ['subject_identifier']
