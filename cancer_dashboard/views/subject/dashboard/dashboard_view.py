@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.views.generic.base import ContextMixin
 from edc_action_item.site_action_items import site_action_items
 from edc_base.view_mixins import EdcBaseViewMixin
-from edc_constants.constants import OFF_STUDY, YES
+from edc_constants.constants import OFF_STUDY, YES, NEW
 from edc_dashboard.views import DashboardView as BaseDashboardView
 from edc_navbar import NavbarViewMixin
 from edc_subject_dashboard.view_mixins import SubjectDashboardViewMixin
@@ -25,7 +25,8 @@ class AddSubjectScreening(ContextMixin):
         """Returns a subject screening model instance or None.
         """
         try:
-            return self.subject_screening_cls.objects.get(**self.subject_screening_options)
+            return self.subject_screening_cls.objects.get(
+                **self.subject_screening_options)
         except ObjectDoesNotExist:
             return None
 
@@ -95,6 +96,7 @@ class DashboardView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        self.get_subject_death_or_message()
         self.get_subject_offstudy_or_message()
         locator_obj = self.get_locator_info()
         context.update(
@@ -129,29 +131,42 @@ class DashboardView(
                     subject_identifier=subject_identifier)
         return obj
 
+    def get_subject_death_or_message(self):
+        subject_visit_cls = django_apps.get_model(
+            'cancer_subject.subjectvisit')
+        subject_death_cls = django_apps.get_model(
+            'cancer_prn.deathreport')
+        subject_identifier = self.kwargs.get('subject_identifier')
+
+        try:
+            subject_visit_cls.objects.get(
+                appointment__subject_identifier=subject_identifier,
+                reason='Death')
+        except ObjectDoesNotExist:
+            self.delete_action_item_if_new(subject_death_cls)
+        else:
+            self.action_cls_item_creator(
+                subject_identifier=subject_identifier,
+                action_cls=subject_death_cls,
+                action_type=DEATH_REPORT_ACTION)
+
     def get_subject_offstudy_or_message(self):
-        obj = None
         subject_visit_cls = django_apps.get_model(
             'cancer_subject.subjectvisit')
         subject_offstudy_cls = django_apps.get_model(
             'cancer_prn.subjectoffstudy')
-        subject_death_cls = django_apps.get_model(
-            'cancer_prn.deathreport')
+
         subject_identifier = self.kwargs.get('subject_identifier')
         obj = subject_visit_cls.objects.filter(
-            Q(reason=OFF_STUDY) | Q(reason='Death'),
+            reason=OFF_STUDY,
             appointment__subject_identifier=subject_identifier)
+        if not obj:
+            self.delete_action_item_if_new(subject_offstudy_cls)
         if obj:
-            if obj[0].reason == 'Death':
-                self.action_cls_item_creator(
-                    subject_identifier=subject_identifier,
-                    action_cls=subject_death_cls,
-                    action_type=DEATH_REPORT_ACTION)
-            else:
-                self.action_cls_item_creator(
-                    subject_identifier=subject_identifier,
-                    action_cls=subject_offstudy_cls,
-                    action_type=SUBJECT_OFFSTUDY_ACTION)
+            self.action_cls_item_creator(
+                subject_identifier=subject_identifier,
+                action_cls=subject_offstudy_cls,
+                action_type=SUBJECT_OFFSTUDY_ACTION)
         return obj
 
     def action_cls_item_creator(
@@ -166,3 +181,23 @@ class DashboardView(
         except ObjectDoesNotExist:
             action_cls(
                 subject_identifier=subject_identifier)
+
+    def delete_action_item_if_new(self, action_model_cls):
+        action_item_obj = self.get_action_item_obj(action_model_cls)
+        if action_item_obj:
+            action_item_obj.delete()
+
+    def get_action_item_obj(self, model_cls):
+        subject_identifier = self.kwargs.get('subject_identifier')
+        action_cls = site_action_items.get(
+            model_cls.action_name)
+        action_item_model_cls = action_cls.action_item_model_cls()
+
+        try:
+            action_item_obj = action_item_model_cls.objects.get(
+                subject_identifier=subject_identifier,
+                action_type__name=model_cls.action_name,
+                status=NEW)
+        except action_item_model_cls.DoesNotExist:
+            return None
+        return action_item_obj
