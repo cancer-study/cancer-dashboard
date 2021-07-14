@@ -83,6 +83,7 @@ class DashboardView(
     subject_locator_model_wrapper_cls = SubjectLocatorModelWrapper
     visit_model_wrapper_cls = SubjectVisitModelWrapper
     special_forms_include_value = "cancer_dashboard/subject/dashboard/special_forms.html"
+    data_action_item_template = "cancer_dashboard/subject/dashboard/data_manager.html"
 
     @property
     def appointments(self):
