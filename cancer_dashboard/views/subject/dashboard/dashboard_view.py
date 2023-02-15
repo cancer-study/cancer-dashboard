@@ -175,12 +175,15 @@ class DashboardView(
             action_cls.action_name)
         action_item_model_cls = action_cls.action_item_model_cls()
         try:
-            action_item_model_cls.objects.get(
+            ae=action_item_model_cls.objects.get(
                 subject_identifier=subject_identifier,
                 action_type__name=action_type)
         except ObjectDoesNotExist:
             action_cls(
                 subject_identifier=subject_identifier)
+        else:
+            pass
+
 
     def delete_action_item_if_new(self, action_model_cls):
         action_item_obj = self.get_action_item_obj(action_model_cls)
