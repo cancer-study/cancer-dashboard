@@ -1,6 +1,5 @@
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
 from django.views.generic.base import ContextMixin
 from edc_action_item.site_action_items import site_action_items
 from edc_base.view_mixins import EdcBaseViewMixin
@@ -11,7 +10,6 @@ from edc_subject_dashboard.view_mixins import SubjectDashboardViewMixin
 
 from cancer_prn.action_items import DEATH_REPORT_ACTION, SUBJECT_OFFSTUDY_ACTION
 from cancer_subject.action_items import SUBJECT_LOCATOR_ACTION
-
 from ....model_wrappers import (
     SubjectVisitModelWrapper, SubjectConsentModelWrapper,
     SubjectScreeningModelWrapper, AppointmentModelWrapper,
@@ -176,14 +174,12 @@ class DashboardView(
             action_cls.action_name)
         action_item_model_cls = action_cls.action_item_model_cls()
         try:
-            ae=action_item_model_cls.objects.get(
+            action_item_model_cls.objects.get(
                 subject_identifier=subject_identifier,
                 action_type__name=action_type)
         except ObjectDoesNotExist:
             action_cls(
                 subject_identifier=subject_identifier)
-        else:
-            pass
 
 
     def delete_action_item_if_new(self, action_model_cls):
