@@ -10,6 +10,9 @@
 
 {% endblock top_bar %}
 
+{% block appointments %}
+	{% include "cancer_dashboard/subject/dashboard/appointments.html" %}
+{% endblock appointments %}
 
 {% block side_bar %}
 	{{ block.super }}
