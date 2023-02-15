@@ -67,9 +67,10 @@ class AddSubjectScreening(ContextMixin):
 
 
 class DashboardView(
-    AddSubjectScreening, EdcBaseViewMixin,
-    SubjectDashboardViewMixin, NavbarViewMixin,
-    BaseDashboardView):
+        AddSubjectScreening, EdcBaseViewMixin,
+        SubjectDashboardViewMixin, NavbarViewMixin,
+        BaseDashboardView):
+
     dashboard_url = 'subject_dashboard_url'
     dashboard_template = 'subject_dashboard_template'
     appointment_model = 'cancer_subject.appointment'
@@ -91,7 +92,7 @@ class DashboardView(
         if not self._appointments:
             self._appointments = self.appointment_model_cls.objects.filter(
                 subject_identifier=self.subject_identifier).order_by(
-                'visit_code')
+                    'visit_code')
         return self._appointments
 
     def get_context_data(self, **kwargs):
@@ -138,17 +139,17 @@ class DashboardView(
             'cancer_prn.deathreport')
         subject_identifier = self.kwargs.get('subject_identifier')
 
-        death_visits = subject_visit_cls.objects.filter(
-            appointment__subject_identifier=subject_identifier,
-            reason='Death')
-
-        if death_visits:
+        try:
+            subject_visit_cls.objects.get(
+                appointment__subject_identifier=subject_identifier,
+                reason='Death')
+        except ObjectDoesNotExist:
+            self.delete_action_item_if_new(subject_death_cls)
+        else:
             self.action_cls_item_creator(
                 subject_identifier=subject_identifier,
                 action_cls=subject_death_cls,
                 action_type=DEATH_REPORT_ACTION)
-        else:
-            self.delete_action_item_if_new(subject_death_cls)
 
     def get_subject_offstudy_or_message(self):
         subject_visit_cls = django_apps.get_model(
