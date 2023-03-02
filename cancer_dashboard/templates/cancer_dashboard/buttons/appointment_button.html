@@ -9,17 +9,11 @@
     {% elif wrapped.appt_status == IN_PROGRESS_APPT %}
         Continue
     {% elif wrapped.appt_status == INCOMPLETE_APPT %}
-        {% if wrapped.object.visit.reason == 'Missed quarterly visit' %}
-            Continue (MISSED CALL OR MISSED VISIT)
-        {% else %}
-            Continue
-        {% endif %}
+        Continue {% if wrapped.object.visit.reason == 'Missed quarterly visit' %}
+        (MISSED CALL OR MISSED VISIT){% endif %}
     {% elif wrapped.appt_status == COMPLETE_APPT %}
         <i class="fa fa-check fa-fw"></i>
-        {% if wrapped.object.visit.reason == 'Missed quarterly visit' %}
-            Done (MISSED CALL OR MISSED VISIT)
-        {% else %}
-            Done
-        {% endif %}
+        Done {% if wrapped.object.visit.reason == 'Missed quarterly visit' %}
+        (MISSED CALL OR MISSED VISIT){% endif %}
     {% endif %}
 </a>
