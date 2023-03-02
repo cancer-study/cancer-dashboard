@@ -1,5 +1,7 @@
 from django import template
 from django.conf import settings
+from edc_appointment.constants import NEW_APPT, INCOMPLETE_APPT, COMPLETE_APPT, \
+    IN_PROGRESS_APPT
 
 register = template.Library()
 
@@ -53,3 +55,19 @@ def dashboard_button(model_wrapper):
     return dict(
         subject_dashboard_url=subject_dashboard_url,
         subject_identifier=model_wrapper.subject_identifier)
+
+
+@register.inclusion_tag('cancer_dashboard/buttons/appointment_button.html')
+def appointment_button(model_wrapper):
+    if hasattr(model_wrapper, 'disabled'):
+        title = 'Start, continue or restart data collection for this timepoint.'
+    else:
+        title = 'Disabled while another appointment is in progress.'
+    return dict(
+        title=title,
+        wrapped=model_wrapper,
+        NEW_APPT=NEW_APPT,
+        IN_PROGRESS_APPT=IN_PROGRESS_APPT,
+        INCOMPLETE_APPT=INCOMPLETE_APPT,
+        COMPLETE_APPT=COMPLETE_APPT,
+    )
