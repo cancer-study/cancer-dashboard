@@ -154,10 +154,12 @@ class DashboardView(
             'cancer_subject.subjectvisit')
         subject_offstudy_cls = django_apps.get_model(
             'cancer_prn.subjectoffstudy')
+        LOST_TO_FOLLOWUP = 'Lost to follow-up'
 
         subject_identifier = self.kwargs.get('subject_identifier')
+        off_study_reasons = [OFF_STUDY, 'Death', LOST_TO_FOLLOWUP]
         obj = subject_visit_cls.objects.filter(
-            reason=OFF_STUDY,
+            reason__in=off_study_reasons,
             appointment__subject_identifier=subject_identifier)
         if not obj:
             self.delete_action_item_if_new(subject_offstudy_cls)
@@ -180,7 +182,6 @@ class DashboardView(
         except ObjectDoesNotExist:
             action_cls(
                 subject_identifier=subject_identifier)
-
 
     def delete_action_item_if_new(self, action_model_cls):
         action_item_obj = self.get_action_item_obj(action_model_cls)
