@@ -154,7 +154,7 @@ class DashboardView(
             'cancer_subject.subjectvisit')
         subject_offstudy_cls = django_apps.get_model(
             'cancer_prn.subjectoffstudy')
-        LOST_TO_FOLLOWUP = 'Lost to follow-up (use only when taking subject off study)'
+        LOST_TO_FOLLOWUP = 'Lost to follow-up'
 
         subject_identifier = self.kwargs.get('subject_identifier')
         off_study_reasons = [OFF_STUDY, 'Death', LOST_TO_FOLLOWUP]
