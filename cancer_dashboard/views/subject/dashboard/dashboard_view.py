@@ -157,7 +157,7 @@ class DashboardView(
         LOST_TO_FOLLOWUP = 'Lost to follow-up'
 
         subject_identifier = self.kwargs.get('subject_identifier')
-        off_study_reasons = [OFF_STUDY, 'Death', LOST_TO_FOLLOWUP]
+        off_study_reasons = [OFF_STUDY, LOST_TO_FOLLOWUP]
         obj = subject_visit_cls.objects.filter(
             reason__in=off_study_reasons,
             appointment__subject_identifier=subject_identifier)
