@@ -7,6 +7,7 @@ from edc_constants.constants import OFF_STUDY, YES, NEW
 from edc_dashboard.views import DashboardView as BaseDashboardView
 from edc_navbar import NavbarViewMixin
 from edc_subject_dashboard.view_mixins import SubjectDashboardViewMixin
+from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 from cancer_prn.action_items import DEATH_REPORT_ACTION, SUBJECT_OFFSTUDY_ACTION
 from cancer_subject.action_items import SUBJECT_LOCATOR_ACTION
@@ -80,8 +81,8 @@ class DashboardView(
     subject_locator_model = 'cancer_subject.subjectlocator'
     subject_locator_model_wrapper_cls = SubjectLocatorModelWrapper
     visit_model_wrapper_cls = SubjectVisitModelWrapper
-    special_forms_include_value = "cancer_dashboard/subject/dashboard/special_forms.html"
-    data_action_item_template = "cancer_dashboard/subject/dashboard/data_manager.html"
+    special_forms_include_value = 'cancer_dashboard/subject/dashboard/special_forms.html'
+    data_action_item_template = 'cancer_dashboard/subject/dashboard/data_manager.html'
 
     @property
     def appointments(self):
@@ -100,8 +101,38 @@ class DashboardView(
         locator_obj = self.get_locator_info()
         context.update(
             YES=YES,
-            locator_obj=locator_obj)
+            locator_obj=locator_obj,
+            current_schedule_names=self.current_schedule_names)
         return context
+
+    def set_current_schedule(self, onschedule_model_obj=None,
+                             schedule=None, visit_schedule=None,
+                             is_onschedule=True):
+        if onschedule_model_obj:
+            self.current_schedule = schedule
+            self.current_visit_schedule = visit_schedule
+            self.current_onschedule_model = onschedule_model_obj
+            self.onschedule_models.append(onschedule_model_obj)
+            self.visit_schedules.update(
+                {visit_schedule.name: visit_schedule})
+
+    def get_onschedule_model_obj(self, schedule):
+        try:
+            return schedule.onschedule_model_cls.objects.get(
+                subject_identifier=self.subject_identifier)
+        except ObjectDoesNotExist:
+            return None
+
+    @property
+    def current_schedule_names(self):
+        subject_identifier = self.kwargs.get('subject_identifier')
+
+        ssh_model_cls = django_apps.get_model(
+            'edc_visit_schedule.subjectschedulehistory')
+        names = ssh_model_cls.objects.filter(
+            subject_identifier=subject_identifier).values_list(
+                'schedule_name', flat=True)
+        return names
 
     def get_locator_info(self):
 
