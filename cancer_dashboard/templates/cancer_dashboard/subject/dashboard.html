@@ -3,9 +3,39 @@
 {% load edc_subject_dashboard_extras %}
 {% load cancer_dashboard_extras %}
 
-{% load staticfiles %}
+{% load static %}
+
+{% block extra-scripts %}
+    <script>
+
+        function confirm_schedule_switch() {
+            let confirmAction = confirm(
+                "Are you sure you want to switch participant to the 6months visits?");
+            if (confirmAction) {
+                window.location.href = "{% url subject_dashboard_url subject_identifier %}switch";
+            } else {
+                alert("Action cancelled");
+            }
+        }
+    </script>
+
+{% endblock extra-scripts %}
 
 {% block locator_information %}{% endblock locator_information %}
+
+{% block other_special_buttons %}
+	<table>
+		<tr>
+			{% if enrolment_duration >= 1 and 'schedule_6months' not in current_schedule_names %}
+				<td>
+					<button class="btn btn-sm btn-info" onclick="confirm_schedule_switch()">
+						<i class="fa fa-random"></i> Switch to 6months visits
+					</button>
+				</td>
+			{% endif %}
+		</tr>
+	</table>
+{% endblock other_special_buttons %}
 
 {% block top_bar %}
 
