@@ -1,12 +1,15 @@
+import pytz
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic.base import ContextMixin
 from edc_action_item.site_action_items import site_action_items
 from edc_base.view_mixins import EdcBaseViewMixin
+from edc_base.utils import get_utcnow
 from edc_constants.constants import OFF_STUDY, YES, NEW
 from edc_dashboard.views import DashboardView as BaseDashboardView
 from edc_navbar import NavbarViewMixin
 from edc_subject_dashboard.view_mixins import SubjectDashboardViewMixin
+from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 from cancer_prn.action_items import DEATH_REPORT_ACTION, SUBJECT_OFFSTUDY_ACTION
 from cancer_subject.action_items import SUBJECT_LOCATOR_ACTION
@@ -14,6 +17,8 @@ from ....model_wrappers import (
     SubjectVisitModelWrapper, SubjectConsentModelWrapper,
     SubjectScreeningModelWrapper, AppointmentModelWrapper,
     SubjectLocatorModelWrapper)
+
+tz = pytz.timezone('Africa/Gaborone')
 
 
 class AddSubjectScreening(ContextMixin):
@@ -80,8 +85,13 @@ class DashboardView(
     subject_locator_model = 'cancer_subject.subjectlocator'
     subject_locator_model_wrapper_cls = SubjectLocatorModelWrapper
     visit_model_wrapper_cls = SubjectVisitModelWrapper
-    special_forms_include_value = "cancer_dashboard/subject/dashboard/special_forms.html"
-    data_action_item_template = "cancer_dashboard/subject/dashboard/data_manager.html"
+    special_forms_include_value = 'cancer_dashboard/subject/dashboard/special_forms.html'
+    data_action_item_template = 'cancer_dashboard/subject/dashboard/data_manager.html'
+    ssh_model = 'edc_visit_schedule.subjectschedulehistory'
+
+    @property
+    def ssh_model_cls(self):
+        return django_apps.get_model(self.ssh_model)
 
     @property
     def appointments(self):
@@ -94,14 +104,94 @@ class DashboardView(
         return self._appointments
 
     def get_context_data(self, **kwargs):
+        if ('switch' in self.request.path and
+                'schedule_6months' not in self.current_schedule_names):
+            self.switch_to_6months_schedule()
+
         context = super().get_context_data(**kwargs)
         self.get_subject_death_or_message()
         self.get_subject_offstudy_or_message()
         locator_obj = self.get_locator_info()
         context.update(
             YES=YES,
-            locator_obj=locator_obj)
+            locator_obj=locator_obj,
+            current_schedule_names=self.current_schedule_names,
+            enrolment_duration=self.get_enrolment_duration)
         return context
+
+    def set_current_schedule(self, onschedule_model_obj=None,
+                             schedule=None, visit_schedule=None,
+                             is_onschedule=True):
+        if onschedule_model_obj:
+            self.current_schedule = schedule
+            self.current_visit_schedule = visit_schedule
+            self.current_onschedule_model = onschedule_model_obj
+            self.onschedule_models.append(onschedule_model_obj)
+            self.visit_schedules.update(
+                {visit_schedule.name: visit_schedule})
+
+    def get_onschedule_model_obj(self, schedule):
+        try:
+            return schedule.onschedule_model_cls.objects.get(
+                subject_identifier=self.subject_identifier)
+        except ObjectDoesNotExist:
+            return None
+
+    @property
+    def current_schedule_names(self):
+        subject_identifier = self.kwargs.get('subject_identifier')
+
+        names = self.ssh_model_cls.objects.filter(
+            subject_identifier=subject_identifier).values_list(
+                'schedule_name', flat=True)
+        return names
+
+    @property
+    def get_enrolment_duration(self):
+        onschedule_model_cls = django_apps.get_model(
+            'cancer_subject.onschedule')
+        subject_identifier = self.kwargs.get('subject_identifier')
+        try:
+            onschedule_obj = onschedule_model_cls.objects.get(
+                subject_identifier=subject_identifier)
+        except onschedule_model_cls.DoesNotExist:
+            return None
+        else:
+            onschedule_dt = onschedule_obj.onschedule_datetime
+            return (get_utcnow() - onschedule_dt).days / 365
+
+    def switch_to_6months_schedule(self):
+        subject_identifier = self.kwargs.get('subject_identifier')
+        try:
+            ssh = self.ssh_model_cls.objects.get(
+                subject_identifier=subject_identifier,
+                schedule_name='schedule')
+        except self.ssh_model_cls.DoesNotExist:
+            return
+        else:
+            if ssh.schedule_status == 'onschedule':
+                onschedule_dt = ssh.onschedule_datetime.astimezone(tz)
+            remaining_appts = self.appointment_model_cls.objects.filter(
+                subject_identifier=subject_identifier,
+                appt_status='new')
+            if remaining_appts.exists():
+                _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                    onschedule_model='cancer_subject.onschedule6months',
+                    name='schedule_6months')
+                schedule.put_on_schedule(
+                    subject_identifier=subject_identifier,
+                    onschedule_datetime=onschedule_dt)
+                remaining_appts = self.appointment_model_cls.objects.filter(
+                    subject_identifier=subject_identifier,
+                    schedule_name='schedule',
+                    appt_status='new')
+                new_appts = self.appointment_model_cls.objects.filter(
+                    subject_identifier=subject_identifier,
+                    schedule_name='schedule_6months').exclude(
+                    visit_code__in=remaining_appts.values_list('visit_code', flat=True))
+                if new_appts:
+                    new_appts.delete()
+                remaining_appts.delete()
 
     def get_locator_info(self):
 
